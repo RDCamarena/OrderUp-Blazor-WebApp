@@ -1,0 +1,36 @@
+﻿@page "/"
+
+@using OrderUp.Client.Services.Contracts
+@inherits CustomerBase
+
+
+@if(Customers == null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <h3 class="mb-5">Customers</h3>
+
+    var customerCount = Customers.Count();
+
+    @if (customerCount > 0)
+    {
+
+        var customers = new List<CustomerDto>();
+        customers = Customers.ToList();
+
+        @foreach (var customer in customers)
+        {
+            <h1>@customer.FirstName @customer.LastName</h1>
+        }
+
+    }}
+
+
+@code{
+
+    
+
+}
+

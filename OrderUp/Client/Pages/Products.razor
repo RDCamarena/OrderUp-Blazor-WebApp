@@ -1,0 +1,27 @@
+﻿@page "/products"
+
+@inherits ProductBase
+
+
+@if(Products == null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    <h3 class="mb-5">Prodcuts</h3>
+
+    var productCount = Products.Count();
+
+    @if (productCount > 0)
+    {
+
+        var products = new List<ProductDto>();
+        products = Products.ToList();
+
+        @foreach (var product in products)
+        {
+            <h1>@product.ProductName $@product.Price</h1>
+        }
+
+    }}
