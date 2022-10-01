@@ -12,7 +12,7 @@ namespace OrderUp.Client.Services.Contracts
             _httpclient = httpclient;
         }
 
-        public static async Task<IEnumerable<OrderDto>> GetOrders()
+        public  async Task<IEnumerable<OrderDto>> GetOrders()
         {
             try
             {

@@ -4,6 +4,14 @@ namespace OrderUp.Client.Services.Contracts
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDto>> GetProductList();
+        List<ProductDto> Products { get; set; }
+        Task GetProductList();
+
+        Task UpdateProduct(ProductDto product);
+        Task DeleteProduct(int id);
+
+        Task CreateProduct(ProductDto product);
+
+        Task<ProductDto> GetSingleProduct(int id);  
     }
 }

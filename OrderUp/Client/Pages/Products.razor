@@ -1,27 +1,55 @@
 ﻿@page "/products"
 
-@inherits ProductBase
+@inject IProductService ProductService
+@inject NavigationManager NavigationManager
 
+<PageTitle>Products</PageTitle>
 
-@if(Products == null)
-{
-    <h3>Loading...</h3>
-}
-else
-{
-    <h3 class="mb-5">Prodcuts</h3>
+<h3>Products</h3>
 
-    var productCount = Products.Count();
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in ProductService.Products)
+       {
+           <tr>
+               <td>@product.ProductName</td>
+               <td>@product.Description</td>
+               <td>$@product.Price</td>
+               <td>
+                   <button type="button" class="btn btn-primary" @onclick="(()=>ToEditProduct(product.Id))"><i class="oi oi-pencil"></i>Edit</button>
+                   <button class="btn btn-danger" @onclick="(()=>DeleteProduct(product.Id))"><i class="oi oi-trash"></i>Delete</button>
+               </td>
+           </tr>
+       }
+    </tbody>
+</table>
+<button class="btn btn-outline-primary" @onclick="CreateNewProduct">Add A New Product</button>
 
-    @if (productCount > 0)
+@code{
+    protected override async Task OnInitializedAsync()
     {
+        await ProductService.GetProductList();
+    }
 
-        var products = new List<ProductDto>();
-        products = Products.ToList();
+    void ToEditProduct(int id)
+    {
+        NavigationManager.NavigateTo($"/product/{id}");
+    }
 
-        @foreach (var product in products)
-        {
-            <h1>@product.ProductName $@product.Price</h1>
-        }
-
-    }}
+    void CreateNewProduct()
+    {
+        NavigationManager.NavigateTo("/product");
+    }
+    async Task DeleteProduct(int id)
+    {
+        await ProductService.DeleteProduct(id);
+    }
+}
