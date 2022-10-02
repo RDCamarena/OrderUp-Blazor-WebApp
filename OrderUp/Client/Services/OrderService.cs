@@ -29,10 +29,10 @@ namespace OrderUp.Client.Services.Contracts
             _navigationManager.NavigateTo($"/customer/{id}");
         }
 
-        public async Task CreateOrder(OrderInDto order, int id)
+        public async Task CreateOrder(OrderInDto order, int custermerId)
         {
             await _httpclient.PostAsJsonAsync("api/order", order);
-            await GetAllOrders(id);
+            await GetAllOrders(custermerId);
 
         }
 

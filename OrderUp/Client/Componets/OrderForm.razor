@@ -1,5 +1,6 @@
 ﻿@inject IProductService ProductServices
 @inject IOrderService OrderService
+@inject NavigationManager NavigationManager
 
 <div>
     <h6>Add New Order</h6>
@@ -25,13 +26,16 @@
     public List<ProductDto> products { get; set; }
 
     OrderInDto order = new OrderInDto();
-    
+
+    public DateOnly  today = DateOnly.FromDateTime(DateTime.Now);
+
 
     async void HandleSubmit()
     {
         order.CustomerId = CustomerId;
-        order.Date = "2022-10-02";
+        order.Date = today.ToString();
         await OrderService.CreateOrder(order, CustomerId);
+        NavigationManager.NavigateTo($"customer/{CustomerId}", forceLoad:true);
     }
 
 }

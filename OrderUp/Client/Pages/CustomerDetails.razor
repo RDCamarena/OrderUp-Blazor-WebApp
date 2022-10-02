@@ -3,6 +3,7 @@
 @inject IOrderService OrderService
 @inject IProductService ProductService
 
+
 <h1>@customer.FirstName @customer.LastName</h1>
 
 <h4>Orders</h4>
@@ -57,6 +58,8 @@ else
     async Task DeleteOrder(int id, int customerId)
     {
         await OrderService.DeleteOrder(id, customerId);
+
+
     }
 
 
