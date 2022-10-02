@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrderUp.Models.Dtos;
 using OrderUp.Server.Data;
-
+using OrderUp.Server.Entity;
 
 namespace OrderUp.Server.Controllers
 {
@@ -25,7 +25,7 @@ namespace OrderUp.Server.Controllers
             {
                 var customers = await _dbContext.Customers.ToListAsync();
 
-                if(customers == null)
+                if (customers == null)
                 {
                     return NotFound();
                 }
@@ -34,8 +34,37 @@ namespace OrderUp.Server.Controllers
             catch (Exception)
             {
 
-                return StatusCode(StatusCodes.Status500InternalServerError,"Error retriving data from the database" );
+                return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving data from the database");
             }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<CustomerDto>> GetSingleCustomer(int? id)
+        {
+            var customer = await _dbContext.Customers.FirstOrDefaultAsync(p => p.Id == id);
+
+            if (customer == null)
+            {
+                return NotFound("Sorry,product not found...");
+            }
+            return Ok(customer);
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<Customer>> CreateProduct(CustomerDto customer)
+        {
+            _dbContext.Customers.Add(new Customer
+            {
+                Id = customer.Id,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                PhoneNumber = customer.PhoneNumber,
+                Email = customer.Email,
+            });
+            await _dbContext.SaveChangesAsync();
+            return Ok(customer);
+
         }
     }
 }

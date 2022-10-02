@@ -4,6 +4,14 @@ namespace OrderUp.Client.Services.Contracts
 {
     public interface ICustomerService
     {
-        Task<IEnumerable<CustomerDto>> GetCustomerObj();
+        List<CustomerDto> Customers { get; set; }
+
+        Task GetCustomerObj();
+
+        Task CreateCustomer(CustomerDto customer);
+
+        
+
+        Task<CustomerDto> GetSingleCustomer(int id);
     }
 }

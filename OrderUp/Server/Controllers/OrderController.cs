@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OrderUp.Models.Dtos;
 using OrderUp.Server.Data;
+using OrderUp.Server.Entity;
+using OrderUp.Server.Utils;
 
 namespace OrderUp.Server.Controllers
 {
@@ -18,24 +20,75 @@ namespace OrderUp.Server.Controllers
         }
 
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders()
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(int id)
         {
-            try
-            {
-                var orders = await _dbContext.Orders.ToListAsync();
 
-                if (orders == null)
-                {
-                    return NotFound();
-                }
-                return Ok(orders);
-            }
-            catch (Exception)
-            {
+            var orders = await _dbContext.Orders.ToListAsync();
+            var products = await _dbContext.Products.ToListAsync();
 
-                return StatusCode(StatusCodes.Status500InternalServerError, "Error retriving data from the database");
+            if (orders == null || products == null)
+            {
+                return NotFound();
             }
+            else
+            {
+                var orderDtos = orders.ConvertToDto(products);
+
+                var orderList = orderDtos.Where(ol => ol.CustomerId == id).ToList();
+                return Ok(orderList);
+            }
+
+
+
         }
+
+
+        [HttpPost]
+        public async Task<ActionResult<Order>> CreateOrder(OrderInDto order)
+        {
+            _dbContext.Orders.Add(new Order
+            {
+                CustomerId = order.CustomerId,
+                Id = order.Id,
+                Date = order.Date,
+                ProductId = order.ProductId,
+                Quantity = order.Quantity,
+            });
+            await _dbContext.SaveChangesAsync();
+            return Ok(await GetFreshOrder(order.CustomerId));
+
+        }
+
+        [HttpGet]
+
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetAllOrders()
+        {
+
+            var orders = await _dbContext.Orders.ToListAsync();
+            return Ok(orders);
+        }
+
+        [HttpDelete("{id}")]
+
+        public async Task<ActionResult<List<OrderDto>>> DeleteOrder(int id)
+        {
+            var dbOrder = _dbContext.Orders.FirstOrDefault(o => o.Id == id);
+            if (dbOrder == null) { return NotFound(); }
+            _dbContext.Orders.Remove(dbOrder);
+            await _dbContext.SaveChangesAsync();
+            return Ok(await GetFreshOrder(id));
+
+        }
+
+        private async Task<ActionResult<List<OrderDto>>> GetFreshOrder(int id)
+        {
+            var orderList = await GetOrders(id);
+
+            if (orderList == null) { return NotFound(); }
+            return Ok(orderList);
+
+        }
+
     }
 }

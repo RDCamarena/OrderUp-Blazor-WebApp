@@ -34,7 +34,7 @@ namespace OrderUp.Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> UpdateProduct(ProductDto product, int id)
+        public async Task<ActionResult<List<ProductDto>>> UpdateProduct(ProductDto product, int id)
         {
             var dbProduct = await _dbContext.Products.FirstOrDefaultAsync(up => up.Id == id);
             if (dbProduct == null)
@@ -42,9 +42,9 @@ namespace OrderUp.Server.Controllers
                 return NotFound("Sorry no product was found");
             }
 
-            dbProduct.Price = product.Price;
-            dbProduct.ProductName = product.ProductName;
-            dbProduct.Description = product.Description;
+             dbProduct.Price = product.Price;
+             dbProduct.ProductName = product.ProductName;
+             dbProduct.Description = product.Description;
 
             await _dbContext.SaveChangesAsync();
             return Ok(await GetDbProducts());
@@ -52,7 +52,7 @@ namespace OrderUp.Server.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> DeleteProduct(int id)
+        public async Task<ActionResult<List<ProductDto>>> DeleteProduct(int id)
         {
             var dbProduct = _dbContext.Products.FirstOrDefault(up => up.Id == id);
             if (dbProduct == null) { return NotFound("Sorry it doesn't exist"); }
@@ -94,7 +94,7 @@ namespace OrderUp.Server.Controllers
             return Ok(product);
         }
 
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetDbProducts()
+        private async Task<ActionResult<List<ProductDto>>> GetDbProducts()
         {
 
             var products = await _dbContext.Products.ToListAsync();

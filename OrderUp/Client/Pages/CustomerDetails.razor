@@ -1,0 +1,73 @@
+﻿@page "/customer/{id:int}"
+@inject ICustomerService CustomerService
+@inject IOrderService OrderService
+@inject IProductService ProductService
+
+<h1>@customer.FirstName @customer.LastName</h1>
+
+<h4>Orders</h4>
+<OrderForm CustomerId="(int)Id" products="ProductService.Products"></OrderForm>
+@if(OrderService.Orders == null)
+{
+    <h1>Loading...</h1>
+}
+else
+{
+    <table class="table">
+     <thead>
+        <tr>
+            <th>Qty</th>
+            <th>Product</th>
+            <th>Date Ordered</th>
+            <th>Total Price</th>
+            <th>Description</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach(var order in OrderService.Orders)
+        {
+            <tr>
+                <td >@order.Quantity</td>
+                <td>@order.Product</td>
+                <td>@order.Date</td>
+                <td>$@order.TotalPrice</td>
+                <td class="flex-nowrap">@order.ProductDescript</td>
+                <td>
+                    <button class="btn btn-danger" @onclick="(()=> DeleteOrder(order.Id, order.CustomerId))">X</button>
+                </td>
+                
+            </tr>
+            
+        }
+    </tbody>
+
+
+</table>
+}
+
+
+@code{
+    [Parameter]
+    public int? Id { get; set; }
+
+    CustomerDto customer = new CustomerDto();
+    OrderDto order = new OrderDto();
+
+    async Task DeleteOrder(int id, int customerId)
+    {
+        await OrderService.DeleteOrder(id, customerId);
+    }
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await ProductService.GetProductList();
+        customer = await CustomerService.GetSingleCustomer((int)Id);
+        await OrderService.GetOrders((int)Id);
+
+
+    }
+}
+   
+

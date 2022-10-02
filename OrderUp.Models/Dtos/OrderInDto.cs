@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OrderUp.Models.Dtos
 {
-    public class OrderDto
+    public class OrderInDto
     {
         public int Id { get; set; }
         public string Date { get; set; }
@@ -14,10 +14,6 @@ namespace OrderUp.Models.Dtos
 
         public int ProductId { get; set; }
 
-        public string Product { get; set; }
-
-        public string ProductDescript { get; set; }
-        public int TotalPrice { get; set; }  
         public int Quantity { get; set; }
     }
 }

@@ -22,23 +22,25 @@ namespace OrderUp.Client.Services.Contracts
         public async Task CreateProduct(ProductDto product)
         {
             var result = await _httpclient.PostAsJsonAsync("api/product", product);
-            await SetProducts(result);
+            await SetProducts();
         }
 
-        private async Task SetProducts(HttpResponseMessage result)
-        {
-            var responce = await result.Content.ReadFromJsonAsync<List<ProductDto>>();
-
-            Products = responce;
-            _navigationManager.NavigateTo("/products");
-        }
-
+       
         public async Task DeleteProduct(int id)
         {
             var result = await _httpclient.DeleteAsync($"api/product/{id}");
-            await SetProducts(result);
+            await SetProducts();
         }
-
+        public async Task UpdateProduct(ProductDto product)
+        {
+            var result = await _httpclient.PutAsJsonAsync($"api/product/{product.Id}", product);
+            await SetProducts();
+        }
+        private async Task SetProducts()
+        {
+            await GetProductList();
+            _navigationManager.NavigateTo("products");
+        }
         public async Task GetProductList()
         {
             try
@@ -56,11 +58,7 @@ namespace OrderUp.Client.Services.Contracts
             }
         }
 
-        public async Task UpdateProduct(ProductDto product)
-        {
-            var result = await _httpclient.PutAsJsonAsync($"api/product/{product.Id}", product);
-            await SetProducts(result);
-        }
+       
 
         public async Task<ProductDto> GetSingleProduct(int id)
         {

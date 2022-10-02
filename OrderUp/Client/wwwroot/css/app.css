@@ -62,3 +62,17 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.cardCustomer {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: red;
+    background-clip: border-box;
+    border:5px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+    pointer-events: painted;
+}
+

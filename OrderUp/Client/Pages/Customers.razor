@@ -1,0 +1,40 @@
+﻿@page "/"
+@inject ICustomerService CustomerService
+@inject NavigationManager NavigationManager
+
+
+<PageTitle>Customers</PageTitle>
+<h1 class="table">Customer List</h1>
+<div>
+    <button class="btn btn-outline-primary" @onclick="(()=> ToCustomerCreate())">Add New Customer</button>
+</div>
+
+
+@if(CustomerService.Customers == null)
+{
+    <h3>Loading...</h3>
+}
+else
+{
+    
+   @foreach(var customer in CustomerService.Customers)
+    {
+        <CustomerCard customer="customer"></CustomerCard>
+    } 
+}
+
+
+
+@code{
+    protected async override Task OnInitializedAsync()
+    {
+        await CustomerService.GetCustomerObj();
+    }
+
+    void ToCustomerCreate()
+    {
+        NavigationManager.NavigateTo("customer/create");
+    }
+
+}
+

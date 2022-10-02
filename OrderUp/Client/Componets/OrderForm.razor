@@ -1,0 +1,37 @@
+﻿@inject IProductService ProductServices
+@inject IOrderService OrderService
+
+<div>
+    <h6>Add New Order</h6>
+ <EditForm Model="order" class="form-control">
+    <label>Qty</label>
+    <InputNumber style="max-width:50px"id="qty"  @bind-Value=order.Quantity></InputNumber>
+    <InputSelect @bind-Value="order.ProductId" style="max-width:250px">
+        <option>Select Product</option>
+        @foreach (var product in ProductServices.Products)
+       {
+           <option value="@product.Id">@product.ProductName</option>
+       }
+
+    </InputSelect>
+    <button type="submit" class="btn btn-outline-primary" @onclick="(()=>HandleSubmit())">Add Order</button>
+</EditForm>
+</div>
+@code{
+    [Parameter]
+    public int CustomerId {get; set;}
+
+    [Parameter]
+    public List<ProductDto> products { get; set; }
+
+    OrderInDto order = new OrderInDto();
+    
+
+    async void HandleSubmit()
+    {
+        order.CustomerId = CustomerId;
+        order.Date = "2022-10-02";
+        await OrderService.CreateOrder(order, CustomerId);
+    }
+
+}
